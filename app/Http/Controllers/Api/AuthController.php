@@ -36,10 +36,9 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
-        $user = User::create($data);
+        User::create($data);
 
-        $token = auth()->attempt($data);
-        return $this->response(['token' => $token->respondWithToken($token), 'user' => $user]);
+        return $this->response([], 200);
     }
 
     public function logout()
