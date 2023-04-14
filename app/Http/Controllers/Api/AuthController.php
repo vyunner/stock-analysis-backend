@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60 * 24 * 30
+        ]);
+    }
+
     public function login(AuthRequest $request)
     {
         $data = $request->validated();
@@ -19,19 +28,23 @@ class AuthController extends Controller
             return $this->response('Incorrect password', 403);
         }
 
-        $token = $user->createToken('default');
-        return $this->response(['token' => $token->plainTextToken, 'user' => $user], 200);
+        $token = auth()->attempt($data);
+        return $this->response(['token' => $this->respondWithToken($token), 'user' => $user], 200);
     }
+
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
-        $token = $user->createToken('default');
 
-        return $this->response(['token' => $token->plainTextToken, 'user' => $user]);
+        $token = auth()->attempt($data);
+        return $this->response(['token' => $token->respondWithToken($token), 'user' => $user]);
     }
-    public function logout(){
-        return 12;
+
+    public function logout()
+    {
+        auth()->logout();
+        return $this->response([], 200);
     }
 }

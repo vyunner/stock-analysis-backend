@@ -24,3 +24,4 @@ Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'regi
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
 });
+
