@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Data;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -16,7 +15,7 @@ class ProductController extends Controller
         $products = Product::create(request()->validate([
             'name' => 'required|max:255',
             'amount' => 'required|max:11',
-            'category_id' => 'required|max:11'
+            'category_id' => 'required|max:11|exists:categories,id'
         ]));
         if (!$products) {
             return $this->response([], 500);
