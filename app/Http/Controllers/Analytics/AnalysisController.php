@@ -12,17 +12,19 @@ class AnalysisController extends Controller
     protected Carbon $today;
     protected Carbon $firstDayOfMonth;
     protected Carbon $lastDayOfMonth;
+    protected Carbon $twoWeeks;
 
     public function __construct()
     {
         $this->today = Carbon::now();
         $this->firstDayOfMonth = Carbon::create($this->today->year, $this->today->month, 1);
         $this->lastDayOfMonth = Carbon::create($this->today->year, $this->today->month, $this->today->daysInMonth);
+        $this->twoWeeks = $this->today->clone()->addWeeks(2);
     }
 
-    public function getTopSellingAndUnsoldProducts()
+    public function getTopSoldAndUnsoldProducts()
     {
-        $topSellingProducts = DB::table('orders')
+        $topSoldProducts = DB::table('orders')
             ->join('products', 'orders.product_id', '=', 'products.id')
             ->select('product_id', 'products.name', DB::raw('SUM(order_amount) as totalSales'),
                 DB::raw('SUM(order_amount * products.price) AS totalRevenue'))
@@ -42,6 +44,24 @@ class AnalysisController extends Controller
             ->limit(5)
             ->get();
 
-        return ['topSellingProducts' => $topSellingProducts, 'topUnsoldProducts' => $topUnsoldProducts];
+        return ['topSellingProducts' => $topSoldProducts, 'topUnsoldProducts' => $topUnsoldProducts];
+    }
+
+    public function getExpiredProducts()
+    {
+        $expired = DB::table('products')
+            ->where('expiry_date', '<', $this->today)
+            ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
+            ->get();
+
+        $expiringSoon = DB::table('products')
+            ->whereBetween('expiry_date', [$this->today, $this->twoWeeks])
+            ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
+            ->get();
+
+        return [
+            'expired' => $expired->isEmpty() ? false : $expired,
+            'expiring_soon' => $expiringSoon->isEmpty() ? false : $expiringSoon
+        ];
     }
 }

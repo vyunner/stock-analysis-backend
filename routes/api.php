@@ -27,6 +27,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('/category', \App\Http\Controllers\Api\CategoryController::class)->except(['create', 'edit']);
     Route::resource('/product', \App\Http\Controllers\Api\ProductController::class)->except(['create', 'edit']);
     Route::resource('/order', \App\Http\Controllers\Api\OrderController::class)->except(['create', 'edit']);
-    Route::get('/analytics', [\App\Http\Controllers\Analytics\AnalysisController::class, 'getTopSellingAndUnsoldProducts']);
+    Route::group(['prefix'=>'/analytics'], function(){
+        Route::get('/get-top-sold-and-unsold', [\App\Http\Controllers\Analytics\AnalysisController::class, 'getTopSoldAndUnsoldProducts']);
+        Route::get('/get-expired-products', [\App\Http\Controllers\Analytics\AnalysisController::class, 'getExpiredProducts']);
+    });
 });
-
