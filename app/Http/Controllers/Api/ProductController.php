@@ -14,8 +14,10 @@ class ProductController extends Controller
     public function store(){
         $products = Product::create(request()->validate([
             'name' => 'required|max:255',
-            'amount' => 'required|max:11',
-            'category_id' => 'required|max:11|exists:categories,id'
+            'price' => 'required|max:11',
+            'product_amount' => 'required|max:11',
+            'category_id' => 'required|max:11|exists:categories,id',
+            'expiry_date' => 'nullable|date'
         ]));
         if (!$products) {
             return $this->response([], 500);

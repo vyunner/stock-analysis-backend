@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -23,12 +24,13 @@ class OrderController extends Controller
         if (!$order) {
             return $this->response([], 500);
         }
-        return $this->response(200);
+        Product::where('id', $order['product_id'])->decrement('product_amount', $order['order_amount']);
+            return $this->response([], 200);
     }
 
     public function show(Order $order)
     {
-
+        return $this->response($order, 200);
     }
 
     public function update(Order $order)
