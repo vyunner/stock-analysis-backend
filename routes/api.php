@@ -31,4 +31,11 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/get-top-sold-and-unsold', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getTopSoldAndUnsoldProducts']);
         Route::get('/get-expired-products', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getExpiredProducts']);
     });
+    Route::post('/test', function (){
+       $product = \App\Models\Product::find(1);
+       $product->files()->create([
+           'file_name' => 'zxc'
+       ]);
+       return $product->files;
+    });
 });
