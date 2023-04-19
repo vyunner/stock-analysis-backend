@@ -9,8 +9,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return $this->response($categories, 200);
+        return $this->response(Category::all(), 200);
     }
 
     public function store()
@@ -21,7 +20,7 @@ class CategoryController extends Controller
         if (!$category) {
             return $this->response([], 500);
         }
-        return $this->response([], 200);
+        return $this->response($category, 200);
     }
 
     public function show(Category $category)
@@ -31,9 +30,15 @@ class CategoryController extends Controller
 
     public function update(Category $category)
     {
+        $category->update(request()->validate([
+            'name' => 'nullable|max:255'
+        ]));
+        return $this->response($category, 200);
     }
 
     public function destroy(Category $category)
     {
+        $category->delete();
+        return $this->response([], 200);
     }
 }
