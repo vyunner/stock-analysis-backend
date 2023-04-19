@@ -24,7 +24,7 @@ class OrderController extends Controller
             return $this->response([], 500);
         }
         Product::where('id', $order['product_id'])->decrement('product_amount', $order['order_amount']);
-            return $this->response([], 200);
+        return $this->response([], 200);
     }
 
     public function show(Order $order)
@@ -34,11 +34,19 @@ class OrderController extends Controller
 
     public function update(Order $order)
     {
+        $newOrder = request()->validate([
+            'order_amount' => 'required|max:11',
+        ]);
+        Product::where('id', $order['product_id'])->increment('product_amount', $newOrder['order_amount'] - $order['order_amount']);
+        $order->update($newOrder);
 
+        return $this->response([], 200);
     }
 
     public function destroy(Order $order)
     {
-
+        Product::where('id', $order['product_id'])->increment('product_amount', $order['order_amount']);
+        $order->delete();
+        return $this->response([], 200);
     }
 }
