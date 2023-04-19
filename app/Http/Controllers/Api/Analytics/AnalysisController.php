@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Analytics;
+namespace App\Http\Controllers\Api\Analytics;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AnalysisController extends Controller
@@ -25,9 +24,9 @@ class AnalysisController extends Controller
     public function getTopSoldAndUnsoldProducts()
     {
         $topSoldProducts = DB::table('orders')
-            ->join('products', 'orders.product_id', '=', 'products.id')
             ->select('product_id', 'products.name', DB::raw('SUM(order_amount) as totalSales'),
                 DB::raw('SUM(order_amount * products.price) AS totalRevenue'))
+            ->join('products', 'orders.product_id', '=', 'products.id')
             ->whereBetween('orders.created_at', [$this->firstDayOfMonth, $this->lastDayOfMonth])
             ->groupBy('product_id')
             ->orderByDesc('totalRevenue')
@@ -35,9 +34,9 @@ class AnalysisController extends Controller
             ->get();
 
         $topUnsoldProducts = DB::table('orders')
-            ->join('products', 'orders.product_id', '=', 'products.id')
             ->select('product_id', 'products.name', DB::raw('SUM(order_amount) as totalSales'),
                 DB::raw('SUM(order_amount * products.price) AS totalRevenue'))
+            ->join('products', 'orders.product_id', '=', 'products.id')
             ->whereBetween('orders.created_at', [$this->firstDayOfMonth, $this->lastDayOfMonth])
             ->groupBy('product_id')
             ->orderBy('totalRevenue')
@@ -50,13 +49,13 @@ class AnalysisController extends Controller
     public function getExpiredProducts()
     {
         $expired = DB::table('products')
-            ->where('expiry_date', '<', $this->today)
             ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
+            ->where('expiry_date', '<', $this->today)
             ->get();
 
         $expiringSoon = DB::table('products')
-            ->whereBetween('expiry_date', [$this->today, $this->twoWeeks])
             ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
+            ->whereBetween('expiry_date', [$this->today, $this->twoWeeks])
             ->get();
 
         return [

@@ -18,17 +18,17 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::group(['prefix' => '/auth'], function () {
-    Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
-    Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
-    Route::post('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:api');
+    Route::post('/login', [\App\Http\Controllers\Api\Auth\AuthController::class, 'login']);
+    Route::post('/register', [\App\Http\Controllers\Api\Auth\AuthController::class, 'register']);
+    Route::post('/logout', [\App\Http\Controllers\Api\Auth\AuthController::class, 'logout'])->middleware('auth:api');
 });
 
 Route::group(['middleware' => ['auth:api']], function () {
-    Route::resource('/category', \App\Http\Controllers\Api\CategoryController::class)->except(['create', 'edit']);
-    Route::resource('/product', \App\Http\Controllers\Api\ProductController::class)->except(['create', 'edit']);
-    Route::resource('/order', \App\Http\Controllers\Api\OrderController::class)->except(['create', 'edit']);
+    Route::resource('/category', \App\Http\Controllers\Api\Shop\CategoryController::class)->except(['create', 'edit']);
+    Route::resource('/product', \App\Http\Controllers\Api\Shop\ProductController::class)->except(['create', 'edit']);
+    Route::resource('/order', \App\Http\Controllers\Api\Shop\OrderController::class)->except(['create', 'edit']);
     Route::group(['prefix'=>'/analytics'], function(){
-        Route::get('/get-top-sold-and-unsold', [\App\Http\Controllers\Analytics\AnalysisController::class, 'getTopSoldAndUnsoldProducts']);
-        Route::get('/get-expired-products', [\App\Http\Controllers\Analytics\AnalysisController::class, 'getExpiredProducts']);
+        Route::get('/get-top-sold-and-unsold', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getTopSoldAndUnsoldProducts']);
+        Route::get('/get-expired-products', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getExpiredProducts']);
     });
 });
