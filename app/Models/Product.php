@@ -11,7 +11,8 @@ class Product extends Model
 
     protected $guarded = false;
 
-    public function files (){
+    public function files()
+    {
         return $this->morphMany(File::class, 'model');
     }
 }

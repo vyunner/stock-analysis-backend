@@ -25,17 +25,16 @@ Route::group(['prefix' => '/auth'], function () {
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::resource('/category', \App\Http\Controllers\Api\Shop\CategoryController::class)->except(['create', 'edit']);
+
     Route::resource('/product', \App\Http\Controllers\Api\Shop\ProductController::class)->except(['create', 'edit']);
+    Route::post('/product/upload/{product}', [\App\Http\Controllers\Api\Shop\ProductController::class, 'uploadImage']);
+    Route::get('/product/upload/{product}', [\App\Http\Controllers\Api\Shop\ProductController::class, 'getImage']);
+    Route::delete('/product/upload/{product}', [\App\Http\Controllers\Api\Shop\ProductController::class, 'deleteImage']);
+
     Route::resource('/order', \App\Http\Controllers\Api\Shop\OrderController::class)->except(['create', 'edit']);
-    Route::group(['prefix'=>'/analytics'], function(){
+
+    Route::group(['prefix' => '/analytics'], function () {
         Route::get('/get-top-sold-and-unsold', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getTopSoldAndUnsoldProducts']);
         Route::get('/get-expired-products', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getExpiredProducts']);
-    });
-    Route::post('/test', function (){
-       $product = \App\Models\Product::find(1);
-       $product->files()->create([
-           'file_name' => 'zxc'
-       ]);
-       return $product->files;
     });
 });

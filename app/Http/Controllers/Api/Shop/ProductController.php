@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers\Api\Shop;
 
+use App\Http\Controllers\Api\Uploads\UploadController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\api\Uploads\UploadRequest;
+use App\Models\File;
 use App\Models\Product;
+use App\Services\UploadService\UploadService;
 
 class ProductController extends Controller
 {
+    private $uploadService;
+
+    public function __construct(UploadService $uploadService){
+        $this->uploadService = $uploadService;
+    }
     public function index()
     {
         return $this->response(Product::all(), 200);
@@ -48,5 +57,30 @@ class ProductController extends Controller
     {
         $product->delete();
         return $this->response([], 200);
+    }
+
+    public function uploadImage(UploadRequest $request, Product $product)
+    {
+        if($this->uploadService->store($request, $product)){
+            return $this->response([], 200);
+        }
+        else {
+            return $this->response([], 422);
+        }
+    }
+
+    public function getImage(Product $product)
+    {
+        return $this->uploadService->get($product);
+    }
+
+    public function deleteImage(Product $product, $file_id = null)
+    {
+        if($this->uploadService->delete($product, $file_id)){
+            return $this->response([], 200);
+        }
+        else {
+            return $this->response([], 422);
+        }
     }
 }

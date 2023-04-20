@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return $this->response(Category::all(), 200);
+        return $this->response(Category::all());
     }
 
     public function store()
