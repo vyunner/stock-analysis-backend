@@ -22,7 +22,7 @@ class ProductController extends Controller
         $products = Product::all();
         foreach ($products as $product){
             $product->category_name = Category::where('id', $product['category_id'])->first()['name'];
-            $product->imgs = $this->uploadService->get($product);
+            $product->files = $this->uploadService->get($product);
         }
         return $this->response($products, 200);
     }
