@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Shop;
 use App\Http\Controllers\Api\Uploads\UploadController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\api\Uploads\UploadRequest;
+use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
 use App\Services\UploadService\UploadService;
@@ -18,7 +19,11 @@ class ProductController extends Controller
     }
     public function index()
     {
-        return $this->response(Product::all(), 200);
+        $products = Product::all();
+        foreach ($products as $product){
+            $product->category_name = Category::where('id', $product['category_id'])->first()['name'];
+        }
+        return $this->response($products, 200);
     }
 
     public function store()
