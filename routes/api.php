@@ -28,8 +28,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::resource('/product', \App\Http\Controllers\Api\Shop\ProductController::class)->except(['create', 'edit']);
     Route::post('/product/upload/{product}', [\App\Http\Controllers\Api\Shop\ProductController::class, 'uploadImage']);
-    Route::get('/product/upload/{product}', [\App\Http\Controllers\Api\Shop\ProductController::class, 'getImage']);
-    Route::delete('/product/upload/{product}', [\App\Http\Controllers\Api\Shop\ProductController::class, 'deleteImage']);
 
     Route::resource('/order', \App\Http\Controllers\Api\Shop\OrderController::class)->except(['create', 'edit']);
 

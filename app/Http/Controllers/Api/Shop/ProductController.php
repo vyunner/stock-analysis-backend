@@ -22,6 +22,7 @@ class ProductController extends Controller
         $products = Product::all();
         foreach ($products as $product){
             $product->category_name = Category::where('id', $product['category_id'])->first()['name'];
+            $product->imgs = $this->uploadService->get($product);
         }
         return $this->response($products, 200);
     }
@@ -61,27 +62,13 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+        $this->uploadService->delete($product);
         return $this->response([], 200);
     }
 
     public function uploadImage(UploadRequest $request, Product $product)
     {
         if($this->uploadService->store($request, $product)){
-            return $this->response([], 200);
-        }
-        else {
-            return $this->response([], 422);
-        }
-    }
-
-    public function getImage(Product $product)
-    {
-        return $this->uploadService->get($product);
-    }
-
-    public function deleteImage(Product $product, $file_id = null)
-    {
-        if($this->uploadService->delete($product, $file_id)){
             return $this->response([], 200);
         }
         else {
