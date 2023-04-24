@@ -10,7 +10,17 @@ class OrderController extends Controller
 {
     public function index()
     {
-        return $this->response(Order::all(), 200);
+        $orders = Order::all();
+
+        foreach ($orders as $order) {
+            $product = Product::find($order->product_id);
+
+            $order->product_name = $product->name;
+            $order->product_price = $product->price;
+            $order->product_amount = $product->product_amount;
+        }
+
+        return $this->response($orders, 200);
     }
 
     public function store()
