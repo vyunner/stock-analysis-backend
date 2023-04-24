@@ -43,24 +43,21 @@ class AnalysisController extends Controller
             ->limit(5)
             ->get();
 
-        return ['topSellingProducts' => $topSoldProducts, 'topUnsoldProducts' => $topUnsoldProducts];
+        return $this->response(['topSellingProducts' => $topSoldProducts, 'topUnsoldProducts' => $topUnsoldProducts], 200);
     }
 
     public function getExpiredProducts()
     {
-        $expired = DB::table('products')
+        $products = DB::table('products')
             ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
-            ->where('expiry_date', '<', $this->today)
-            ->get();
+            ->whereIn('expiry_date', [$this->today, $this->twoWeeks], '<')
+            ->get()
+            ->map(function ($product) {
+                $product->is_expired = $product->expiry_date < $this->today;
+                return $product;
+            })
+            ->toArray();
 
-        $expiringSoon = DB::table('products')
-            ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
-            ->whereBetween('expiry_date', [$this->today, $this->twoWeeks])
-            ->get();
-
-        return [
-            'expired' => $expired->isEmpty() ? false : $expired,
-            'expiring_soon' => $expiringSoon->isEmpty() ? false : $expiringSoon
-        ];
+        return $this->response($products, 200);
     }
 }
