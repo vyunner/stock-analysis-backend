@@ -48,16 +48,26 @@ class AnalysisController extends Controller
 
     public function getExpiredProducts()
     {
-        $products = DB::table('products')
+        $expired = DB::table('products')
             ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
-            ->whereIn('expiry_date', [$this->today, $this->twoWeeks], '<')
+            ->where('expiry_date', '<', $this->today)
             ->get()
             ->map(function ($product) {
-                $product->is_expired = $product->expiry_date < $this->today;
+                $product->is_expired = true;
                 return $product;
-            })
-            ->toArray();
+            });
 
-        return $this->response($products, 200);
+        $expiringSoon = DB::table('products')
+            ->select('id AS product_id', 'name', 'product_amount', 'expiry_date')
+            ->whereBetween('expiry_date', [$this->today, $this->twoWeeks])
+            ->get()
+            ->map(function ($product) {
+                $product->is_expired = false;
+                return $product;
+            });
+
+        $merged = array_merge($expired->toArray(), $expiringSoon->toArray());
+
+        return $this->response($merged, 200);
     }
 }
