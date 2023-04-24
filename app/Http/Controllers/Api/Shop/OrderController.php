@@ -46,7 +46,7 @@ class OrderController extends Controller
         $newOrder = request()->validate([
             'order_amount' => 'nullable|max:11',
         ]);
-        Product::where('id', $order['product_id'])->increment('product_amount', $newOrder['order_amount'] - $order['order_amount']);
+        Product::where('id', $order['product_id'])->deincrement('product_amount', $newOrder['order_amount'] - $order['order_amount']);
         $order->update($newOrder);
 
         return $this->response([$order], 200);
