@@ -34,5 +34,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['prefix' => '/analytics'], function () {
         Route::get('/get-top-sold-and-unsold', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getTopSoldAndUnsoldProducts']);
         Route::get('/get-expired-products', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getExpiredProducts']);
+        Route::get('/get-low-amount-products', [\App\Http\Controllers\Api\Analytics\AnalysisController::class, 'getLowAmountProducts']);
     });
 });

@@ -62,4 +62,13 @@ class AnalysisController extends Controller
 
         return $this->response($products, 200);
     }
+
+    public function getLowAmountProducts()
+    {
+        $products = DB::table('products')
+            ->where('product_amount', '<', 100)
+            ->get();
+
+        return $this->response($products, 200);
+    }
 }
