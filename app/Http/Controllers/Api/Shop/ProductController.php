@@ -61,9 +61,13 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->delete();
-        $this->uploadService->delete($product);
-        return $this->response([], 200);
+        try {
+            $product->delete();
+            $this->uploadService->delete($product);
+            return $this->response([], 200);
+        } catch (\Exception $e) {
+            return $this->response(['error' => $e->getMessage()], 422);
+        }
     }
 
     public function uploadImage(UploadRequest $request, Product $product)

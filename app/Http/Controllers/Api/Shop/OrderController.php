@@ -54,8 +54,12 @@ class OrderController extends Controller
 
     public function destroy(Order $order)
     {
-        Product::where('id', $order['product_id'])->increment('product_amount', $order['order_amount']);
-        $order->delete();
-        return $this->response([], 200);
+        try {
+            Product::where('id', $order['product_id'])->increment('product_amount', $order['order_amount']);
+            $order->delete();
+            return $this->response([], 200);
+        } catch (\Exception $e) {
+            return $this->response(['error' => $e->getMessage()], 422);
+        }
     }
 }

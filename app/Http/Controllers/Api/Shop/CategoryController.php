@@ -38,7 +38,11 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        $category->delete();
-        return $this->response([], 200);
+        try {
+            $category->delete();
+            return $this->response([], 200);
+        } catch (\Exception $e) {
+            return $this->response(['error' => $e->getMessage()], 422);
+        }
     }
 }
